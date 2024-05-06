@@ -1,0 +1,181 @@
+<html>
+<head>
+<meta charset=utf-8 />
+<title>Perceptual Circle Scaling</title>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+
+<style>
+    body {
+    margin:0;
+    padding:0;
+    font-family:
+    'Times New Roman', Times, serif;
+    }
+
+  h1 {
+    position: absolute;
+    right: 50px;
+    top: 10px;
+    padding: 8px 2%;
+    margin: 0;
+    background: rgba(6, 116, 116, 0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 3px;
+    color: whitesmoke;
+    font-size: 1.5em;
+    z-index: 800;
+    }
+
+  #map {
+    position:absolute;
+    top:0;
+    bottom:0;
+    width:960px;
+    height: 540px;
+   }
+
+   .legend {
+    line-height: 40px;
+    font-size: 16px;
+    width: 190px;
+    color: #333333;
+    padding: 6px 8px;
+    background: white;
+    background: rgba(255,255,255,0.5);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+ 
+.legend i {
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.9;
+}
+ 
+.legend img {
+    width: 16px;
+    height: 16px;
+    margin-right: 3px;
+    float: left;
+}
+ 
+.legend p {
+    font-size: 14px;
+    line-height: 20px;
+    margin: 0;
+}
+
+.legend {
+
+font-family: 'Times New Roman', Times, serif;
+
+}
+
+</style>
+
+</head>
+<body>
+    <div id='map'></div>
+    <h1>NHL Team's Arenas, 2024-25</h1>
+
+
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-ajax/2.1.0/leaflet.ajax.min.js"></script>
+
+
+<script>
+console.log("hello world!");
+</script>
+
+<script>
+
+    var map = L.map('map', {
+        center: [39.5, -95.3],
+        zoom: 3.50
+    });
+
+    var Esri_WorldStreetMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+	attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
+}).addTo(map);
+
+
+
+Arenas1 = L.geoJson.ajax("assets/ec.geojson",{
+    attribution: 'Data: , Article: Everything we know about the Arizona Coyotes moving to Utah , Map By: John Jackson',
+    onEachFeature: function (feature, layer) {
+      layer.bindTooltip(
+        "Arena: " + feature.properties.Arena + "<br>" +
+        "Team: " + feature.properties.Team + "<br>" +
+        "Capacity: " + feature.properties.Capacity
+        );
+    },
+    pointToLayer: function (feature, x){
+      return L.circleMarker(x, {
+        color: '#000080',
+        opacity: 1,
+        weight: 2,
+        fillColor: '#87ceeb',
+        fillOpacity: .5,
+        radius: 10
+      }).on({
+              mouseover: highlightFeature,
+              mouseout: function(e){
+                this.setStyle({color: '#000080', fillColor: '#87ceeb', opacity: '1', weight: '2', fillOpacity: '.5', radius: '10'})
+              }
+    }) }});
+
+Arenas1.addTo(map);
+
+
+
+Arenas2 = L.geoJson.ajax("assets/wc.geojson",{
+    onEachFeature: function (feature, layer) {
+      layer.bindTooltip(
+        "Arena: " + feature.properties.Arena + "<br>" +
+        "Team: " + feature.properties.Team + "<br>" +
+        "Capacity: " + feature.properties.Capacity
+        );
+    },
+    pointToLayer: function (feature, latlong){
+      return L.circleMarker(latlong, {
+        color: '#800000',
+        opacity: 1,
+        weight: 2,
+        fillColor: '#ff0000',
+        fillOpacity: .5,
+        radius: 10
+      }).on({
+              mouseover: highlightFeature,
+              mouseout: function(e){
+                this.setStyle({color: '#800000', fillColor: '#ff0000', opacity: '1', weight: '2', fillOpacity: '.5', radius: '10'})
+              }
+    }) }});
+
+Arenas2.addTo(map);
+
+function highlightFeature(e) {
+    var layer = e.target;
+
+    layer.setStyle({
+        weight: 2,
+        color: '#7600bc',
+        fillColor: '#ca5cdd',
+        fillOpacity: .5,
+        radius: 50
+    });
+
+    layer.bringToFront();
+}
+
+function resetHighlight(e) {
+    Arenas1.resetStyle(e.target);
+};
+
+</script>
+
+</body>
+</html>
